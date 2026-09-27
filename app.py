@@ -5,11 +5,17 @@ Provides REST API endpoints for score inference, preset persona profiles, and re
 the responsive modern UI.
 """
 
+import os
 from flask import Flask, render_template, request, jsonify
 from ml_engine import HealthScorePredictor
-import os
 
-app = Flask(__name__)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 predictor = HealthScorePredictor()
 
 # Preset demo personas for fast 1-click exploration by the user

@@ -11,7 +11,8 @@ import os
 import joblib
 import numpy as np
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), 'models', 'health_model.joblib')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, 'models', 'health_model.joblib')
 
 class HealthScorePredictor:
     def __init__(self):

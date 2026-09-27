@@ -200,8 +200,10 @@ def train_and_export_model():
     print(f"  RMSE: {rmse:.2f}")
     print(f"  R^2 Score: {r2:.4f}")
     
-    os.makedirs('models', exist_ok=True)
-    model_path = os.path.join('models', 'health_model.joblib')
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    models_dir = os.path.join(BASE_DIR, 'models')
+    os.makedirs(models_dir, exist_ok=True)
+    model_path = os.path.join(models_dir, 'health_model.joblib')
     
     payload = {
         'model': model,
