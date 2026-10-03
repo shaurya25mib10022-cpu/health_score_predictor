@@ -8,6 +8,7 @@ the responsive modern UI.
 import os
 from flask import Flask, render_template, request, jsonify
 from ml_engine import HealthScorePredictor
+from mental_health_engine import MentalHealthPredictor, MENTAL_HEALTH_PRESETS, QUESTIONS_METADATA
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,6 +18,7 @@ app = Flask(
     static_folder=os.path.join(BASE_DIR, 'static')
 )
 predictor = HealthScorePredictor()
+mental_predictor = MentalHealthPredictor()
 
 # Preset demo personas for fast 1-click exploration by the user
 PRESET_PERSONAS = {
@@ -136,13 +138,53 @@ PRESET_PERSONAS = {
 
 @app.route('/')
 def index():
-    return render_template('index.html', presets=PRESET_PERSONAS)
+    return render_template(
+        'index.html',
+        presets=PRESET_PERSONAS,
+        mental_presets=MENTAL_HEALTH_PRESETS,
+        mental_questions=QUESTIONS_METADATA,
+        initial_tab='mental'
+    )
+
+@app.route('/mental-health')
+def mental_health_page():
+    return render_template(
+        'index.html',
+        presets=PRESET_PERSONAS,
+        mental_presets=MENTAL_HEALTH_PRESETS,
+        mental_questions=QUESTIONS_METADATA,
+        initial_tab='mental'
+    )
+
+@app.route('/physical-health')
+def physical_health_page():
+    return render_template(
+        'index.html',
+        presets=PRESET_PERSONAS,
+        mental_presets=MENTAL_HEALTH_PRESETS,
+        mental_questions=QUESTIONS_METADATA,
+        initial_tab='physical'
+    )
 
 @app.route('/api/presets', methods=['GET'])
 def get_presets():
     return jsonify({
         'status': 'success',
         'presets': PRESET_PERSONAS
+    })
+
+@app.route('/api/mental-health/presets', methods=['GET'])
+def get_mental_presets():
+    return jsonify({
+        'status': 'success',
+        'presets': MENTAL_HEALTH_PRESETS
+    })
+
+@app.route('/api/mental-health/questions', methods=['GET'])
+def get_mental_questions():
+    return jsonify({
+        'status': 'success',
+        'questions': QUESTIONS_METADATA
     })
 
 @app.route('/api/predict', methods=['POST'])
@@ -164,7 +206,26 @@ def predict_health():
             'message': str(e)
         }), 500
 
+@app.route('/api/mental-health/predict', methods=['POST'])
+def predict_mental_health():
+    try:
+        user_input = request.get_json(force=True)
+        if not user_input:
+            return jsonify({'status': 'error', 'message': 'No questionnaire data provided'}), 400
+        
+        result = mental_predictor.predict(user_input)
+        return jsonify({
+            'status': 'success',
+            'data': result
+        })
+    except Exception as e:
+        app.logger.error(f"Error during mental health prediction: {e}")
+        return jsonify({
+            'status': 'error',
+            'message': str(e)
+        }), 500
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
-    print(f"Starting Health Score Predictor on http://localhost:{port}")
+    print(f"Starting Health & Mental Health Predictor on http://localhost:{port}")
     app.run(host='0.0.0.0', port=port, debug=True)

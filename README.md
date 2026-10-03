@@ -1,47 +1,158 @@
-# Vitalis AI — Health Score Predictor & Future Action Planner
+# MindVitalis — AI Mental Health, Stress & Physical Health Predictor
 
-A clinical-grade, machine-learning-powered **Health Score & Longevity Predictor** web application that evaluates holistic multi-biomarker inputs, estimates physiological biological age vs chronological age, analyzes cardiovascular and metabolic risk stratification, and provides a 3-phase evidence-based future action roadmap.
+A clinical-grade, machine-learning-powered **Mental Health & Stress Score Predictor** and **Longevity Predictor** application. Evaluates user responses to evidence-based psychometric questions (PSS-10, GAD-7, PHQ-9, WHO-5, Maslach Burnout) to predict an overall **Mental Health Score (0–100)** and **Stress Score (0–100)**, renders multi-domain radar charts, flags critical strain triggers, and provides an interactive 4-7-8 breathing calm widget alongside a personalized 3-phase coping roadmap.
 
 ---
 
 ## 🌟 Key Features
 
-### 1. Multi-Dimensional Biomarker & Lifestyle Input
-- **Demographics & Anthropometrics**: Age, Biological Sex, Height, Weight with live real-time BMI classification.
-- **Cardiovascular & Clinical Vitals**: Systolic & Diastolic Blood Pressure (with real-time AHA stage classification), Resting Heart Rate, Fasting Blood Glucose, and Total Serum Cholesterol.
-- **Physical Activity & Movement**: Weekly moderate-to-vigorous exercise minutes (WHO benchmarked) and daily step volume.
-- **Restorative Sleep & Circadian Health**: Sleep duration, self-reported sleep architecture quality (1–5 scale), and daily screen time.
-- **Hydration & Nutritional Pattern**: Liters of water daily and dietary quality (Mediterranean/whole food rating).
-- **Stress & Toxic Habits**: Perceived allostatic stress scale (1–10 slider), smoking/nicotine status, and alcohol frequency.
-- **First-Degree Family Genetics**: Early cardiovascular disease, type 2 diabetes, and chronic hypertension.
+### 🧠 1. AI Mental Health & Stress Score Predictor
+- **Evidence-Based Questionnaire**: 15 validated screening questions + circadian & screen-time inputs:
+  1. **Mood & Emotional Vitality (PHQ / WHO-5)**: Anhedonia, persistent low mood/depression, cheerfulness & optimism.
+  2. **Stress & Perceived Control (PSS-10)**: Feeling overwhelmed by difficulties, feeling unable to control events, coping self-efficacy.
+  3. **Anxiety & Nervous Tension (GAD-7)**: Nervousness & on-edge feelings, uncontrollable worry loops, somatic tension (palpitations, muscle stiffness, headaches).
+  4. **Sleep & Restorative Recovery**: Insomnia/night awakenings, daytime mental exhaustion, average hours of sleep per night.
+  5. **Cognitive Vitality & Burnout (Maslach Scale)**: Emotional detachment/burnout from duties, brain fog/indecision, daily screen/focus hours.
+  6. **Social Connection & Coping Buffers**: Social isolation/lack of confidants, active stress recovery habits (exercise, hobbies, mindfulness).
 
-### 2. Machine Learning & Clinical Ensemble Engine
-- **Random Forest Regressor**: Trained on a 6,000-sample multivariate clinical dataset grounded in NHANES, Framingham Heart Study, and AHA Life's Essential 8 metrics ($R^2 > 0.82$).
-- **Granular 6-Pillar Health Score (0 - 100)**:
-  1. *Cardiovascular Health*
-  2. *Metabolic & Body Composition*
-  3. *Physical Fitness & Activity*
-  4. *Sleep & Circadian Recovery*
-  5. *Mental Wellbeing & Stress Resilience*
-  6. *Habits & Lifestyle Cleanliness*
-- **Biological Age Estimation**: Calculates physiological longevity delta based on metabolic, arterial, and lifestyle markers (e.g. *32 calendar age -> 27.5 biological age*).
-- **Risk Stratification Matrix**: Low, Moderate, or High tier classification for Cardiovascular Disease, Insulin Resistance / Type 2 Diabetes, and Burnout / Chronic Fatigue.
+- **Dual Machine Learning Models (Random Forest Regressors, $R^2 \approx 0.96$)**:
+  - **Mental Health Score (0 – 100)**: Higher indicates greater psychological flourishing, emotional stability, and resilience.
+    - *85–100*: Flourishing & Optimal Well-Being
+    - *70–84*: Resilient & Balanced
+    - *50–69*: Moderate / Mild Strain
+    - *30–49*: Elevated Distress / Vulnerability
+    - *0–29*: High Clinical Risk / Severe Strain
+  - **Stress Score (0 – 100)**: Higher indicates elevated allostatic load and nervous system activation.
+    - *0–25*: Low / Serene Eustress
+    - *26–50*: Mild / Moderate Daily Stress
+    - *51–75*: High / Elevated Chronic Stress
+    - *76–100*: Critical / Severe Acute Overwhelm
 
-### 3. Dynamic 3-Phase Future Action Roadmap
-- **Phase 1: Days 1 – 14 (Immediate Micro-Habits & Quick Wins)**: Interactive checklist of high-yield habits targeting the user's lowest-scoring categories (e.g., post-meal 10-min walk, morning sunlight anchor, screen wind-down).
-- **Phase 2: Days 15 – 45 (Lifestyle Routine Architecture)**: Weekly schedules for Zone 2 cardio, resistance training, Mediterranean nutrition, and sleep hygiene.
-- **Phase 3: Days 46 – 90 (Measurable Longevity Milestones)**: Hard clinical target metrics (Target BP <120/80 mmHg, Target Resting HR, 5% metabolic weight reduction).
-- **Recommended Diagnostic Screenings**: Specific tests to discuss with a physician (Comprehensive Lipid Panel / ApoB, Fasting Glucose + HbA1c, CMP, Vitamin D).
+- **6 Psychometric Domains & Radar Visualization**:
+  - Emotional Vitality & Mood
+  - Stress Control & Resilience
+  - Nervous Regulation & Calm
+  - Sleep & Restorative Recovery
+  - Cognitive Vitality & Burnout Resistance
+  - Social Buffer & Coping Habits
 
-### 4. Modern, Responsive Frontend
-- **Medical-Tech Design**: Tailwind CSS, Dark / Light mode toggle with local storage persistence, responsive mobile/desktop layout.
-- **Interactive Visualizations**:
-  - Animated SVG circular gauge for the composite vitality score.
-  - Interactive **Chart.js** 6-axis Radar Chart comparing individual scores against optimal longevity benchmarks.
-  - Quick 1-click **Preset Personas** (*🏃 Endurance Athlete*, *💼 Desk Worker*, *⚠️ High Metabolic Risk*, *🧘 Senior Pro*).
-- **Print / PDF Summary**: Formatted medical report export for physical print or PDF saving.
+- **Interactive 4-7-8 Parasympathetic Breathing Calm Widget**:
+  - Interactive on-screen visual breathing bubble guiding users through:
+    - *Inhale (4s)*: Expands circle, stimulates diaphragmatic breathing.
+    - *Hold (7s)*: Gently holds breath, stabilizes heart rhythm.
+    - *Exhale (8s)*: Slow mouth exhale triggering the parasympathetic brake via vagus nerve stimulation.
+  - Live seconds countdown and cycle tracker with Start/Pause controls.
 
+- **Actionable 3-Phase Coping Roadmap & Crisis Helplines**:
+  - *Phase 1 (Days 1–7)*: Autonomic Decompression & Sleep Stabilization
+  - *Phase 2 (Weeks 2–4)*: Cognitive Boundaries & Cortisol Regulation
+  - *Phase 3 (Month 2+)*: Sustainable Long-term Psychological Fitness & Flourishing
+  - *Emergency Helplines*: 988 (US/Canada), 741741 (Crisis Text Line), 1800-599-0019 (KIRAN India), 111 (NHS UK), Befrienders Worldwide.
 
+---
 
-## ⚕️ Medical Disclaimer
-This software is built for educational, predictive wellness demonstration and informational purposes only. It is not intended to diagnose, treat, cure, or prevent any medical condition. Users should always consult a licensed medical professional or physician for health decisions.
+### ❤️ 2. Physical Health & Longevity Predictor (Preserved)
+- Seamlessly toggle to the **Physical Health** tab to evaluate vitals, BMI, blood pressure categories, fasting glucose, cholesterol, biological age estimation, and cardiovascular risk stratification.
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Requirements & Setup
+Ensure Python 3.10+ is installed with the required libraries:
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Run the Interactive Terminal CLI
+You can take the psychological assessment directly in your command line:
+```bash
+python mental_health_cli.py
+```
+This prompts you through each question interactively and prints a formatted terminal report showing your Mental Health Score, Stress Score, domain bars, red flags, strengths, and coping steps!
+
+### 3. Run the Web Application
+Start the Flask web server:
+```bash
+python app.py
+```
+Then open your browser at:
+```
+http://localhost:5000
+```
+- Select preset personas (*🌱 Thriving*, *💼 Work Burnout*, *😰 High Anxiety*, *🌧️ Overwhelmed*) for instant 1-click evaluation, or fill out the questionnaire.
+- Switch between **Mental Health & Stress** and **Physical Health** using the top navigation switcher.
+- Click **Print / Save PDF** to export your formatted report.
+
+---
+
+## 📡 REST API Documentation
+
+### Mental Health Endpoints
+
+#### 1. `POST /api/mental-health/predict`
+Calculates Mental Health Score and Stress Score from user questionnaire inputs.
+```json
+{
+  "q_anhedonia": 1,
+  "q_depressed": 1,
+  "q_optimism": 3,
+  "q_overwhelmed": 1,
+  "q_uncontrollable": 1,
+  "q_coping_confidence": 3,
+  "q_anxious": 1,
+  "q_worry": 1,
+  "q_somatic": 1,
+  "q_sleep_issues": 1,
+  "q_fatigue": 1,
+  "q_burnout": 1,
+  "q_concentration": 1,
+  "q_isolation": 1,
+  "q_coping_habits": 2,
+  "sleep_hours": 7.5,
+  "work_screen_hours": 6.5
+}
+```
+**Response:**
+```json
+{
+  "status": "success",
+  "data": {
+    "mental_health_score": 88.5,
+    "stress_score": 15.2,
+    "mental_health_tier": {
+      "title": "Flourishing & Optimal Well-Being",
+      "badge": "Optimal",
+      "color": "emerald"
+    },
+    "stress_tier": {
+      "title": "Low / Serene Stress Level",
+      "badge": "Serene / Low",
+      "color": "emerald"
+    },
+    "domains": { ... },
+    "risk_factors": [ ... ],
+    "strengths": [ ... ],
+    "action_plan": { ... }
+  }
+}
+```
+
+#### 2. `GET /api/mental-health/presets`
+Returns all 4 pre-configured demo personas.
+
+#### 3. `GET /api/mental-health/questions`
+Returns metadata and option choices for all 15 screening questions.
+
+---
+
+## 🧪 Running Automated Tests
+Run the comprehensive test suite verifying the ML engine, psychometric formulas, API routes, and personas:
+```bash
+python test_app.py
+```
+
+---
+
+## ⚕️ Psychological & Medical Disclaimer
+MindVitalis AI is an educational predictive modeling and psychometric self-screening tool. It is not intended to provide clinical psychiatric diagnoses, replace therapy, or prescribe treatment. If you are experiencing acute distress, suicidal ideation, or severe mental health difficulties, please reach out immediately to your local emergency medical service or call a crisis hotline (such as dialing **988** in the US/Canada or **1800-599-0019** in India).

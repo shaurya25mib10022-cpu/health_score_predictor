@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vitalis — AI Health Score & Longevity Predictor</title>
+    <title>MindVitalis — AI Mental Health & Stress Score Predictor</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,18 +13,19 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            900: '#064e3b',
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
                         },
                         vivid: {
                             teal: '#0ea5e9',
                             indigo: '#6366f1',
                             amber: '#f59e0b',
-                            rose: '#f43f5e'
+                            rose: '#f43f5e',
+                            emerald: '#10b981'
                         }
                     },
                     fontFamily: {
@@ -41,37 +42,49 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/Chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
-<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen font-sans antialiased selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-200 min-h-screen font-sans antialiased selection:bg-indigo-500 selection:text-white">
 
     <!-- Top Navigation -->
     <nav class="sticky top-0 z-50 backdrop-blur-md bg-white/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 transition-colors">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white font-bold text-xl">
-                    <i class="fa-solid fa-heart-pulse"></i>
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-teal-400 flex items-center justify-center shadow-lg shadow-indigo-500/20 text-white font-bold text-xl">
+                    <i class="fa-solid fa-brain"></i>
                 </div>
                 <div>
-                    <span class="text-xl font-bold tracking-tight font-['Plus_Jakarta_Sans'] bg-gradient-to-r from-emerald-600 to-teal-500 dark:from-emerald-400 dark:to-teal-300 bg-clip-text text-transparent">Vitalis AI</span>
-                    <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">Clinical & ML</span>
+                    <span class="text-xl font-bold tracking-tight font-['Plus_Jakarta_Sans'] bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-500 dark:from-indigo-400 dark:to-teal-300 bg-clip-text text-transparent">MindVitalis</span>
+                    <span class="hidden sm:inline-block ml-2 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">ML &amp; Psychometrics</span>
                 </div>
+            </div>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="flex items-center p-1 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80">
+                <button id="tab-btn-mental" type="button" class="mode-tab-btn active-tab px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all text-indigo-600 dark:text-indigo-400">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Mental Health &amp; Stress</span>
+                </button>
+                <button id="tab-btn-physical" type="button" class="mode-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Physical Health</span>
+                </button>
             </div>
 
             <!-- Quick Controls -->
             <div class="flex items-center space-x-3">
-                <a href="#input-section" class="hidden md:inline-flex items-center text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                    <i class="fa-solid fa-sliders mr-1.5"></i> Input Biomarkers
+                <a href="#mental-results-section" id="nav-mental-results-link" class="hidden md:inline-flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 transition-colors">
+                    <i class="fa-solid fa-chart-pie mr-1.5"></i> Results
                 </a>
-                <a href="#results-section" id="nav-results-link" class="hidden md:inline-flex items-center text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                    <i class="fa-solid fa-chart-pie mr-1.5"></i> Health Report
+                <a href="#results-section" id="nav-results-link" class="hidden md:inline-flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 transition-colors">
+                    <i class="fa-solid fa-heart-pulse mr-1.5"></i> Physical Report
                 </a>
-                <a href="#action-plan-section" id="nav-plan-link" class="hidden md:inline-flex items-center text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">
-                    <i class="fa-solid fa-calendar-check mr-1.5"></i> Future Roadmap
+                <a href="#action-plan-section" id="nav-plan-link" class="hidden md:inline-flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 transition-colors">
+                    <i class="fa-solid fa-calendar-check mr-1.5"></i> Roadmap
                 </a>
 
                 <!-- Dark Mode Toggle Button -->
@@ -83,18 +96,59 @@
     </nav>
 
     <!-- Hero Banner -->
-    <header class="relative overflow-hidden pt-8 pb-6 border-b border-slate-200/80 dark:border-slate-800/80 bg-gradient-to-b from-emerald-50/50 via-transparent to-transparent dark:from-emerald-950/20">
+    <header class="relative overflow-hidden pt-8 pb-6 border-b border-slate-200/80 dark:border-slate-800/80 bg-gradient-to-b from-indigo-50/50 via-transparent to-transparent dark:from-indigo-950/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto">
+            
+            <!-- MENTAL HEALTH HERO CONTENT -->
+            <div id="hero-mental-content" class="text-center max-w-3xl mx-auto">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-indigo-100/80 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700 mb-4 animate-pulse">
+                    <i class="fa-solid fa-brain"></i>
+                    <span>Evidence-Based Psychometrics &amp; Machine Learning Engine</span>
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white leading-tight">
+                    AI Mental Health &amp; <span class="bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-500 bg-clip-text text-transparent">Stress Score Predictor</span>
+                </h1>
+                <p class="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                    Answer evidence-based psychological screening questions to receive your instant <strong>Mental Health Score</strong> and <strong>Stress Score</strong>, radar domain analysis, key risk alerts, and a tailored 3-phase coping roadmap.
+                </p>
+
+                <!-- Fast Mental Persona Demo Loaders -->
+                <div class="mt-6 p-3 sm:p-4 rounded-2xl bg-white/90 dark:bg-slate-900/90 shadow-sm border border-slate-200 dark:border-slate-800 backdrop-blur-sm">
+                    <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-indigo-500"></i> Fast Test: Load Preset Persona
+                    </p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        <button type="button" onclick="loadMentalPersona('thriving')" class="preset-btn px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all text-left">
+                            <span class="block font-semibold text-slate-800 dark:text-slate-100">🌱 Thriving</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">High Resilience</span>
+                        </button>
+                        <button type="button" onclick="loadMentalPersona('burnout')" class="preset-btn px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all text-left">
+                            <span class="block font-semibold text-slate-800 dark:text-slate-100">💼 Work Burnout</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">11h Screen &amp; Drain</span>
+                        </button>
+                        <button type="button" onclick="loadMentalPersona('high_anxiety')" class="preset-btn px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all text-left">
+                            <span class="block font-semibold text-slate-800 dark:text-slate-100">😰 High Anxiety</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Tension &amp; Insomnia</span>
+                        </button>
+                        <button type="button" onclick="loadMentalPersona('overwhelmed')" class="preset-btn px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 dark:border-slate-700 hover:border-indigo-500 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-all text-left">
+                            <span class="block font-semibold text-slate-800 dark:text-slate-100">🌧️ Overwhelmed</span>
+                            <span class="text-[11px] text-slate-500 dark:text-slate-400">Low Mood &amp; Isolated</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PHYSICAL HEALTH HERO CONTENT (Hidden when in Mental mode) -->
+            <div id="hero-physical-content" class="text-center max-w-3xl mx-auto hidden">
                 <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-100/80 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700 mb-4 animate-pulse">
                     <i class="fa-solid fa-dna"></i>
-                    <span>Evidence-Based Machine Learning & Clinical Algorithms</span>
+                    <span>Evidence-Based Machine Learning &amp; Clinical Algorithms</span>
                 </div>
                 <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white leading-tight">
                     Comprehensive Health Score &amp; <span class="bg-gradient-to-r from-emerald-600 via-teal-500 to-indigo-600 bg-clip-text text-transparent">Longevity Predictor</span>
                 </h1>
                 <p class="mt-3 text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
-                    Input your vitals, lifestyle habits, and biomarkers to receive an instant multidimensional health evaluation, biological age comparison, and a tailored 3-phase future action roadmap.
+                    Input your vitals, lifestyle habits, and biomarkers to receive an instant multidimensional health evaluation, biological age comparison, and a tailored future action roadmap.
                 </p>
 
                 <!-- Fast Persona Demo Loaders -->
@@ -122,14 +176,634 @@
                     </div>
                 </div>
             </div>
+
         </div>
     </header>
 
     <!-- Main Container -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
 
-        <!-- Form Section -->
-        <section id="input-section" class="scroll-mt-20">
+        <!-- ============================================================= -->
+        <!-- MENTAL HEALTH QUESTIONNAIRE SECTION -->
+        <!-- ============================================================= -->
+        <section id="mental-input-section" class="scroll-mt-20">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-bold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-question text-indigo-500"></i> Psychometric Self-Assessment
+                    </h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">Select how frequently you experienced each state over the past 2 weeks.</p>
+                </div>
+                <button type="button" onclick="resetMentalForm()" class="text-xs font-medium text-slate-500 hover:text-rose-500 dark:text-slate-400 dark:hover:text-rose-400 transition-colors flex items-center gap-1">
+                    <i class="fa-solid fa-rotate-left"></i> Reset Questionnaire
+                </button>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="mb-6 p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div class="flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300">
+                    <i class="fa-solid fa-circle-check text-indigo-500"></i>
+                    <span>Assessment Progress:</span>
+                    <strong id="mh-answered-count" class="text-indigo-600 dark:text-indigo-400">15 of 15 answered (100%)</strong>
+                </div>
+                <div class="w-full sm:w-64 h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                    <div id="mh-progress-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-300" style="width: 100%"></div>
+                </div>
+            </div>
+
+            <form id="mental-health-form" onsubmit="handleMentalFormSubmit(event)" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                    <!-- Card 1: Mood & Emotional Well-Being -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-sun"></i>
+                                </span>
+                                1. Mood &amp; Emotional Vitality
+                            </h3>
+                            <span class="text-[11px] font-semibold text-amber-600 dark:text-amber-400">PHQ / WHO-5</span>
+                        </div>
+
+                        <!-- q_anhedonia -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Little interest or pleasure in doing things
+                            </label>
+                            <input type="hidden" id="mh-q_anhedonia" name="q_anhedonia" value="1">
+                            <div id="opt-group-q_anhedonia" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_anhedonia', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_anhedonia', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_anhedonia', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_anhedonia', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_anhedonia', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constantly</button>
+                            </div>
+                        </div>
+
+                        <!-- q_depressed -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling down, depressed, discouraged, or hopeless
+                            </label>
+                            <input type="hidden" id="mh-q_depressed" name="q_depressed" value="1">
+                            <div id="opt-group-q_depressed" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_depressed', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_depressed', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_depressed', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_depressed', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_depressed', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constantly</button>
+                            </div>
+                        </div>
+
+                        <!-- q_optimism -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling cheerful, optimistic, and looking forward to future
+                            </label>
+                            <input type="hidden" id="mh-q_optimism" name="q_optimism" value="3">
+                            <div id="opt-group-q_optimism" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_optimism', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_optimism', 1)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Occasionally</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_optimism', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_optimism', 3)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_optimism', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Always</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Stress & Sense of Control -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-shield-heart"></i>
+                                </span>
+                                2. Stress &amp; Perceived Control
+                            </h3>
+                            <span class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">PSS-10 Scale</span>
+                        </div>
+
+                        <!-- q_overwhelmed -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Difficulties piling up so high you cannot overcome them
+                            </label>
+                            <input type="hidden" id="mh-q_overwhelmed" name="q_overwhelmed" value="1">
+                            <div id="opt-group-q_overwhelmed" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_overwhelmed', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_overwhelmed', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_overwhelmed', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_overwhelmed', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_overwhelmed', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Very Often</button>
+                            </div>
+                        </div>
+
+                        <!-- q_uncontrollable -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling unable to control important life events
+                            </label>
+                            <input type="hidden" id="mh-q_uncontrollable" name="q_uncontrollable" value="1">
+                            <div id="opt-group-q_uncontrollable" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_uncontrollable', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_uncontrollable', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_uncontrollable', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_uncontrollable', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_uncontrollable', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Very Often</button>
+                            </div>
+                        </div>
+
+                        <!-- q_coping_confidence -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Confidence in handling personal problems &amp; tasks
+                            </label>
+                            <input type="hidden" id="mh-q_coping_confidence" name="q_coping_confidence" value="3">
+                            <div id="opt-group-q_coping_confidence" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_coping_confidence', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Not at all</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_coping_confidence', 1)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Slightly</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_coping_confidence', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Moderate</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_coping_confidence', 3)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Confident</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_coping_confidence', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">High</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Anxiety & Nervous Regulation -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-wave-square"></i>
+                                </span>
+                                3. Anxiety &amp; Nervous Tension
+                            </h3>
+                            <span class="text-[11px] font-semibold text-teal-600 dark:text-teal-400">GAD-7 Scale</span>
+                        </div>
+
+                        <!-- q_anxious -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling nervous, anxious, on edge, or irritable
+                            </label>
+                            <input type="hidden" id="mh-q_anxious" name="q_anxious" value="1">
+                            <div id="opt-group-q_anxious" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_anxious', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_anxious', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_anxious', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_anxious', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_anxious', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constantly</button>
+                            </div>
+                        </div>
+
+                        <!-- q_worry -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Trouble relaxing or controlling worrying thoughts
+                            </label>
+                            <input type="hidden" id="mh-q_worry" name="q_worry" value="1">
+                            <div id="opt-group-q_worry" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_worry', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_worry', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_worry', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_worry', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_worry', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constantly</button>
+                            </div>
+                        </div>
+
+                        <!-- q_somatic -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Physical stress (muscle tightness, racing heart, headaches)
+                            </label>
+                            <input type="hidden" id="mh-q_somatic" name="q_somatic" value="1">
+                            <div id="opt-group-q_somatic" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_somatic', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_somatic', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_somatic', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_somatic', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_somatic', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constant</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Sleep & Recovery -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-bed"></i>
+                                </span>
+                                4. Sleep &amp; Restorative Recovery
+                            </h3>
+                            <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400">Circadian Reset</span>
+                        </div>
+
+                        <!-- q_sleep_issues -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Trouble falling/staying asleep, or unrefreshed morning
+                            </label>
+                            <input type="hidden" id="mh-q_sleep_issues" name="q_sleep_issues" value="1">
+                            <div id="opt-group-q_sleep_issues" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_sleep_issues', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_sleep_issues', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_sleep_issues', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">1-2 nights</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_sleep_issues', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">3-4 nights</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_sleep_issues', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Nightly</button>
+                            </div>
+                        </div>
+
+                        <!-- q_fatigue -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling tired, drained of energy, daytime mental fog
+                            </label>
+                            <input type="hidden" id="mh-q_fatigue" name="q_fatigue" value="1">
+                            <div id="opt-group-q_fatigue" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_fatigue', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">None</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_fatigue', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Mild</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_fatigue', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Moderate</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_fatigue', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Frequent</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_fatigue', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Severe</button>
+                            </div>
+                        </div>
+
+                        <!-- Sleep duration slider -->
+                        <div class="space-y-1 pt-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <label class="font-medium text-slate-700 dark:text-slate-300">Average Sleep Duration</label>
+                                <span id="mh-sleep-hours-val" class="font-bold text-indigo-600 dark:text-indigo-400">7.5h</span>
+                            </div>
+                            <input type="range" id="mh-sleep-hours" min="3.5" max="12.0" step="0.5" value="7.5" oninput="document.getElementById('mh-sleep-hours-val').innerText = this.value + 'h'" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Cognitive Vitality & Burnout -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-brain"></i>
+                                </span>
+                                5. Cognitive Focus &amp; Burnout
+                            </h3>
+                            <span class="text-[11px] font-semibold text-purple-600 dark:text-purple-400">Maslach Scale</span>
+                        </div>
+
+                        <!-- q_burnout -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Emotionally exhausted, detached from work / studies
+                            </label>
+                            <input type="hidden" id="mh-q_burnout" name="q_burnout" value="1">
+                            <div id="opt-group-q_burnout" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_burnout', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_burnout', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_burnout', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_burnout', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_burnout', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Constant</button>
+                            </div>
+                        </div>
+
+                        <!-- q_concentration -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Brain fog, trouble concentrating, difficulty deciding
+                            </label>
+                            <input type="hidden" id="mh-q_concentration" name="q_concentration" value="1">
+                            <div id="opt-group-q_concentration" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_concentration', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">None</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_concentration', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Slight</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_concentration', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Moderate</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_concentration', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Frequent</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_concentration', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Severe</button>
+                            </div>
+                        </div>
+
+                        <!-- Screen time slider -->
+                        <div class="space-y-1 pt-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <label class="font-medium text-slate-700 dark:text-slate-300">Daily Screen / Focus Hours</label>
+                                <span id="mh-screen-hours-val" class="font-bold text-purple-600 dark:text-purple-400">6.5h</span>
+                            </div>
+                            <input type="range" id="mh-screen-hours" min="1.0" max="16.0" step="0.5" value="6.5" oninput="document.getElementById('mh-screen-hours-val').innerText = this.value + 'h'" class="w-full">
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Social Buffer & Coping Habits -->
+                    <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
+                            <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
+                                <span class="w-6 h-6 rounded-lg bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs">
+                                    <i class="fa-solid fa-hands-holding-child"></i>
+                                </span>
+                                6. Social Buffer &amp; Coping Habits
+                            </h3>
+                            <span class="text-[11px] font-semibold text-rose-600 dark:text-rose-400">Resilience Buffer</span>
+                        </div>
+
+                        <!-- q_isolation -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Feeling lonely or lacking someone to confide in
+                            </label>
+                            <input type="hidden" id="mh-q_isolation" name="q_isolation" value="1">
+                            <div id="opt-group-q_isolation" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_isolation', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Supported</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_isolation', 1)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_isolation', 2)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Sometimes</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_isolation', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Often</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_isolation', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Severe</button>
+                            </div>
+                        </div>
+
+                        <!-- q_coping_habits -->
+                        <div class="space-y-1.5">
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300">
+                                Active stress recovery (exercise, hobbies, mindfulness)
+                            </label>
+                            <input type="hidden" id="mh-q_coping_habits" name="q_coping_habits" value="2">
+                            <div id="opt-group-q_coping_habits" class="grid grid-cols-5 gap-1">
+                                <button type="button" data-val="0" onclick="selectMHOption('q_coping_habits', 0)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Never</button>
+                                <button type="button" data-val="1" onclick="selectMHOption('q_coping_habits', 1)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Rarely</button>
+                                <button type="button" data-val="2" onclick="selectMHOption('q_coping_habits', 2)" class="mh-opt-btn active p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">1-2x/wk</button>
+                                <button type="button" data-val="3" onclick="selectMHOption('q_coping_habits', 3)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">3-4x/wk</button>
+                                <button type="button" data-val="4" onclick="selectMHOption('q_coping_habits', 4)" class="mh-opt-btn p-1.5 text-center rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] font-medium text-slate-700 dark:text-slate-300">Daily</button>
+                            </div>
+                        </div>
+
+                        <div class="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400">
+                            <i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Even 15 mins of intentional decompression cuts circulating cortisol by up to 25%.
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4 flex justify-center">
+                    <button type="submit" id="mh-submit-btn" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-teal-500 hover:from-indigo-700 hover:to-teal-600 text-white font-bold text-base shadow-xl shadow-indigo-500/25 transition-all flex items-center justify-center gap-3">
+                        <i id="mh-submit-btn-icon" class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span id="mh-submit-spinner" class="hidden">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        </span>
+                        <span id="mh-submit-btn-text">Calculate Mental Health &amp; Stress Scores</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+
+        <!-- ============================================================= -->
+        <!-- MENTAL HEALTH RESULTS DASHBOARD SECTION -->
+        <!-- ============================================================= -->
+        <section id="mental-results-section" class="scroll-mt-20 hidden space-y-8 animate-fade-in" data-empty="true">
+
+            <!-- Result Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
+                <div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Evaluation Dashboard</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">
+                        Your Mental Health &amp; Stress Report
+                    </h2>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.print()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 dark:hover:border-indigo-500 text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-print"></i> Print / Save PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- DUAL SCORE CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                <!-- CARD 1: MENTAL HEALTH SCORE -->
+                <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+                    <!-- Circular Dial -->
+                    <div class="relative w-36 h-36 flex-shrink-0 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" class="stroke-slate-100 dark:stroke-slate-800" stroke-width="10" fill="transparent"></circle>
+                            <circle id="mh-score-circle" cx="60" cy="60" r="54" stroke="#6366f1" stroke-width="10" stroke-linecap="round" fill="transparent" stroke-dasharray="339.29 339.29" stroke-dashoffset="339.29" class="transition-all duration-1000 ease-out"></circle>
+                        </svg>
+                        <div class="absolute flex flex-col items-center justify-center text-center">
+                            <span id="mh-score-display" class="text-3xl font-black font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">--</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">out of 100</span>
+                        </div>
+                    </div>
+                    <!-- Details -->
+                    <div class="space-y-2 text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+                            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Mental Health Score</h3>
+                        </div>
+                        <div>
+                            <span id="mh-tier-badge" class="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider bg-indigo-100 text-indigo-800 border-indigo-300">
+                                Evaluating...
+                            </span>
+                        </div>
+                        <p id="mh-tier-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Composite evaluation of emotional vitality, optimism, stress resilience, and cognitive functioning.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- CARD 2: STRESS SCORE -->
+                <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+                    <!-- Circular Dial -->
+                    <div class="relative w-36 h-36 flex-shrink-0 flex items-center justify-center">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" class="stroke-slate-100 dark:stroke-slate-800" stroke-width="10" fill="transparent"></circle>
+                            <circle id="stress-score-circle" cx="60" cy="60" r="54" stroke="#f43f5e" stroke-width="10" stroke-linecap="round" fill="transparent" stroke-dasharray="339.29 339.29" stroke-dashoffset="339.29" class="transition-all duration-1000 ease-out"></circle>
+                        </svg>
+                        <div class="absolute flex flex-col items-center justify-center text-center">
+                            <span id="stress-score-display" class="text-3xl font-black font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">--</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">Stress Index</span>
+                        </div>
+                    </div>
+                    <!-- Details -->
+                    <div class="space-y-2 text-center sm:text-left">
+                        <div class="flex items-center justify-center sm:justify-start gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                            <h3 class="font-extrabold text-lg text-slate-900 dark:text-white">Stress Load Index</h3>
+                        </div>
+                        <div>
+                            <span id="stress-tier-badge" class="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider bg-rose-100 text-rose-800 border-rose-300">
+                                Evaluating...
+                            </span>
+                        </div>
+                        <p id="stress-tier-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Autonomic nervous strain, perceived helplessness, somatic tension, and cognitive overload.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- DOMAIN BREAKDOWN & PSYCHOMETRIC RADAR -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                <!-- Left: 6 Psychometric Domains Bars -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+                        <h4 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-chart-simple text-indigo-500"></i> Psychometric Domain Analysis
+                        </h4>
+                        <span class="text-xs text-slate-400">Score / 100</span>
+                    </div>
+
+                    <div id="mh-domain-bars-container" class="space-y-3">
+                        <!-- Rendered dynamically -->
+                    </div>
+                </div>
+
+                <!-- Right: Radar Chart Visualization -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                        <h4 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-circle-nodes text-purple-500"></i> Resilience Spider Map
+                        </h4>
+                        <span class="text-xs text-slate-400">Multidimensional Profile</span>
+                    </div>
+
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="mh-radar-chart"></canvas>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center mt-3">
+                        Balanced polygons reflect holistic psychological stability; indentations represent areas benefiting from active restorative intervention.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- RISKS & STRENGTHS CARDS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Red Flags / Risks -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h4 class="font-bold text-sm text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Flagged Stress Triggers &amp; Strain Indicators
+                    </h4>
+                    <div id="mh-risks-container" class="space-y-2.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Strengths -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h4 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved"></i> Psychological Strengths &amp; Resilience Anchors
+                    </h4>
+                    <div id="mh-strengths-container" class="space-y-2.5">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- INTERACTIVE COPING TOOLKIT (BREATHING CALM WIDGET) -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-indigo-900 via-slate-900 to-purple-950 text-white shadow-xl space-y-6">
+                <div class="text-center max-w-xl mx-auto space-y-2">
+                    <span class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        Interactive Vagal Nerve Reset
+                    </span>
+                    <h3 class="text-2xl font-black font-['Plus_Jakarta_Sans']">
+                        4-7-8 Parasympathetic Breathing Calm Widget
+                    </h3>
+                    <p class="text-xs text-indigo-200 leading-relaxed">
+                        Scientifically proven to activate the vagus nerve and slow heart rate in under 2 minutes. Click Start to begin guided breathing cycles.
+                    </p>
+                </div>
+
+                <!-- Animated Breathing Ring -->
+                <div class="py-4">
+                    <div class="breathing-circle-outer">
+                        <div id="breathing-circle-inner" class="breathing-circle-inner">
+                            <span id="breathing-timer-disp" class="text-xl font-extrabold">--</span>
+                            <span class="text-[9px] uppercase tracking-wider text-indigo-100">Breathe</span>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4 space-y-1">
+                        <p id="breathing-guide-text" class="text-sm font-semibold text-indigo-200">
+                            Ready to start?
+                        </p>
+                        <p id="breathing-cycle-disp" class="text-xs text-indigo-400">
+                            Cycle 1 of 4
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-center">
+                    <button type="button" id="breathing-toggle-btn" onclick="toggleBreathingExercise()" class="px-6 py-2.5 rounded-xl text-xs font-semibold bg-indigo-500 hover:bg-indigo-600 text-white transition-all shadow-lg shadow-indigo-500/30 flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> Start 4-7-8 Calm Exercise
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3-PHASE PERSONALIZED ACTION ROADMAP -->
+            <div class="p-6 sm:p-8 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 dark:border-slate-800 pb-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Tailored Plan</span>
+                    <h3 class="text-xl sm:text-2xl font-extrabold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">
+                        Evidence-Based Mental Health Recovery Roadmap
+                    </h3>
+                </div>
+
+                <!-- Phase 1 -->
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">Phase 1</span>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Days 1 - 7: Autonomic Decompression &amp; Sleep Stabilization</h4>
+                    </div>
+                    <div id="mh-phase1-container" class="space-y-2 pl-2 border-l-2 border-indigo-200 dark:border-indigo-800">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Phase 2 -->
+                <div class="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-teal-100 dark:bg-teal-950 text-teal-700 dark:text-teal-300">Phase 2</span>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Weeks 2 - 4: Cognitive Boundaries &amp; Cortisol Regulation</h4>
+                    </div>
+                    <div id="mh-phase2-container" class="space-y-2 pl-2 border-l-2 border-teal-200 dark:border-teal-800">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Phase 3 -->
+                <div class="space-y-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300">Phase 3</span>
+                        <h4 class="font-bold text-sm text-slate-900 dark:text-white">Month 2+: Sustainable Psychological Fitness &amp; Flourishing</h4>
+                    </div>
+                    <div id="mh-phase3-container" class="space-y-2 pl-2 border-l-2 border-purple-200 dark:border-purple-800">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Support Helplines -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-phone-volume text-indigo-500"></i> Free &amp; Confidential Mental Health Helplines
+                    </h4>
+                    <div id="mh-resources-container" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <p id="mh-disclaimer-text" class="text-[11px] text-slate-400 italic pt-2">
+                    Vitalis Mental Health Predictor is an educational self-reflection screening and machine learning tool, not a diagnostic clinical evaluation.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- ============================================================= -->
+        <!-- PHYSICAL HEALTH INPUT & RESULTS (Preserved) -->
+        <!-- ============================================================= -->
+        <section id="input-section" class="scroll-mt-20 hidden">
             <div class="flex items-center justify-between mb-4">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-bold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white flex items-center gap-2">
@@ -229,10 +903,6 @@
                                 <input type="number" id="input-cholesterol" name="cholesterol" min="100" max="400" value="180" required class="w-full px-2 py-2 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
                             </div>
                         </div>
-
-                        <div class="text-[11px] text-slate-500 dark:text-slate-400 italic">
-                            * Standard fasting values: Fasting glucose &lt;100 mg/dL, Total cholesterol &lt;200 mg/dL.
-                        </div>
                     </div>
 
                     <!-- Card 3: Fitness & Daily Movement -->
@@ -250,415 +920,290 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Active Mins / Week</label>
-                                <input type="number" id="input-activity" name="activity_mins" min="0" max="1500" value="210" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                <span class="text-[10px] text-slate-400">WHO target: &gt;150 mins</span>
+                                <input type="number" id="input-activity" name="activity_mins" min="0" max="1200" value="180" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Daily Steps (Avg)</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Daily Steps</label>
                                 <input type="number" id="input-steps" name="daily_steps" min="500" max="40000" step="100" value="8500" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                <span class="text-[10px] text-slate-400">Longevity tier: 8-10k+</span>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Water Intake (Liters/day)</label>
-                                <input type="number" id="input-water" name="water_liters" min="0.5" max="8.0" step="0.1" value="2.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sleep (Hours/Day)</label>
+                                <input type="number" id="input-sleep" name="sleep_hours" min="3" max="14" step="0.1" value="7.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Diet Quality (1 to 5)</label>
-                                <select id="input-diet" name="diet_quality" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                    <option value="5">5 - Mediterranean / High Whole Foods</option>
-                                    <option value="4" selected>4 - Healthy / Balanced Home-Cooked</option>
-                                    <option value="3">3 - Average / Occasional Processed</option>
-                                    <option value="2">2 - Low Veggies / Frequent Fast Food</option>
-                                    <option value="1">1 - Ultra-Processed / Irregular</option>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sleep Quality (1-5)</label>
+                                <select id="input-sleep-qual" name="sleep_quality" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                                    <option value="1">1 - Very Poor / Restless</option>
+                                    <option value="2">2 - Fair / Light</option>
+                                    <option value="3">3 - Moderate</option>
+                                    <option value="4" selected>4 - Good / Restorative</option>
+                                    <option value="5">5 - Excellent / Deep</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Card 4: Sleep & Recovery -->
+                    <!-- Card 4: Nutrition & Recovery -->
                     <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
                             <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
                                 <span class="w-6 h-6 rounded-lg bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xs">
-                                    <i class="fa-solid fa-bed"></i>
+                                    <i class="fa-solid fa-apple-whole"></i>
                                 </span>
-                                4. Sleep &amp; Restoration
+                                4. Diet &amp; Hydration
                             </h3>
-                            <span class="text-xs text-slate-500 dark:text-slate-400">Circadian Cycle</span>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sleep Duration (Hours)</label>
-                                <input type="number" id="input-sleep" name="sleep_hours" min="3" max="14" step="0.5" value="7.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                <span class="text-[10px] text-slate-400">Target: 7.0 - 8.5 hrs</span>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Water (Liters/Day)</label>
+                                <input type="number" id="input-water" name="water_liters" min="0.5" max="8.0" step="0.1" value="2.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
                             </div>
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Sleep Quality (1 - 5)</label>
-                                <select id="input-sleep-qual" name="sleep_quality" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                    <option value="5">5 - Deep, Restorative, Never Wake</option>
-                                    <option value="4" selected>4 - Good, Refreshed Morning</option>
-                                    <option value="3">3 - Fair, Minor Restlessness</option>
-                                    <option value="2">2 - Poor, Frequent Awakenings</option>
-                                    <option value="1">1 - Insomnia / Exhausted</option>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Diet Quality (1-5)</label>
+                                <select id="input-diet" name="diet_quality" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                                    <option value="1">1 - Ultra-processed / Fast food</option>
+                                    <option value="2">2 - Mixed / Inconsistent</option>
+                                    <option value="3">3 - Balanced home meals</option>
+                                    <option value="4" selected>4 - Whole foods / High veg</option>
+                                    <option value="5">5 - Clean Mediterranean / Plant-rich</option>
                                 </select>
                             </div>
                         </div>
-
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Daily Screen Time (Hours)</label>
-                            <input type="number" id="input-screen" name="screen_time" min="0.5" max="18" step="0.5" value="6.0" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                            <span class="text-[10px] text-slate-400">Includes work screens, TV, phone</span>
-                        </div>
                     </div>
 
-                    <!-- Card 5: Stress & Habits -->
+                    <!-- Card 5: Lifestyle Behaviors -->
                     <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
                             <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
                                 <span class="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs">
-                                    <i class="fa-solid fa-brain"></i>
+                                    <i class="fa-solid fa-wine-glass"></i>
                                 </span>
-                                5. Stress &amp; Substances
+                                5. Lifestyle &amp; Habits
                             </h3>
-                            <span id="stress-indicator" class="text-xs font-semibold text-emerald-600 dark:text-emerald-400">Low (3/10)</span>
-                        </div>
-
-                        <div>
-                            <div class="flex items-center justify-between mb-1">
-                                <label class="text-xs font-medium text-slate-700 dark:text-slate-300">Perceived Stress (1 - 10)</label>
-                                <span id="stress-val" class="text-xs font-bold text-slate-900 dark:text-white">3</span>
-                            </div>
-                            <input type="range" id="input-stress" name="stress_level" min="1" max="10" value="3" oninput="updateStressDisplay()" class="w-full accent-emerald-500 cursor-pointer">
-                            <div class="flex justify-between text-[10px] text-slate-400">
-                                <span>1 (Zen)</span>
-                                <span>5 (Moderate)</span>
-                                <span>10 (Overwhelmed)</span>
-                            </div>
                         </div>
 
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Smoking / Nicotine</label>
+                                <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Smoking Status</label>
                                 <select id="input-smoking" name="smoking_status" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
                                     <option value="never" selected>Never Smoked</option>
                                     <option value="former">Former Smoker</option>
-                                    <option value="occasional">Occasional / Vape</option>
-                                    <option value="regular">Daily Smoker</option>
+                                    <option value="occasional">Occasional / Social</option>
+                                    <option value="daily">Daily Smoker</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Alcohol Intake</label>
                                 <select id="input-alcohol" name="alcohol_intake" class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
-                                    <option value="none">None (0/wk)</option>
-                                    <option value="light" selected>Light (1-3 drinks/wk)</option>
-                                    <option value="moderate">Moderate (4-7 drinks/wk)</option>
-                                    <option value="heavy">Heavy (8+ drinks/wk)</option>
+                                    <option value="none" selected>None / Abstinent</option>
+                                    <option value="light">Light (1-2 drinks/wk)</option>
+                                    <option value="moderate">Moderate (3-7 drinks/wk)</option>
+                                    <option value="heavy">Heavy (&gt;7 drinks/wk)</option>
                                 </select>
                             </div>
                         </div>
+
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <label class="font-medium text-slate-700 dark:text-slate-300">Self-Reported Stress (1-10)</label>
+                                <span id="stress-val" class="font-bold text-emerald-600 dark:text-emerald-400">3</span>
+                            </div>
+                            <input type="range" id="input-stress" name="stress_level" min="1" max="10" value="3" oninput="updateStressDisplay()" class="w-full">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">Daily Screen Time (Hours)</label>
+                            <input type="number" id="input-screen" name="screen_time" min="0.5" max="18.0" step="0.5" value="5.5" required class="w-full px-3 py-2 text-sm rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-all">
+                        </div>
                     </div>
 
-                    <!-- Card 6: Family History & Clinical Genetics -->
+                    <!-- Card 6: Genetic & Medical History -->
                     <div class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
                             <h3 class="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2 text-sm">
                                 <span class="w-6 h-6 rounded-lg bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400 flex items-center justify-center text-xs">
                                     <i class="fa-solid fa-dna"></i>
                                 </span>
-                                6. Family Medical History
+                                6. Family History
                             </h3>
-                            <span class="text-xs text-slate-500 dark:text-slate-400">First-Degree</span>
                         </div>
-
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Select any conditions diagnosed in immediate family (parents/siblings):</p>
 
                         <div class="space-y-3 pt-1">
-                            <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-colors">
-                                <input type="checkbox" id="input-family-cvd" name="family_cvd" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 dark:bg-slate-800">
-                                <div class="text-xs">
-                                    <span class="font-medium text-slate-800 dark:text-slate-200">Early Cardiovascular Disease</span>
-                                    <p class="text-[11px] text-slate-400">Heart attack or stroke before age 60</p>
-                                </div>
+                            <label class="flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" id="input-family-cvd" name="family_cvd" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 dark:bg-slate-800">
+                                <span>Cardiovascular Disease / Heart Attack</span>
                             </label>
-
-                            <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-colors">
-                                <input type="checkbox" id="input-family-diabetes" name="family_diabetes" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 dark:bg-slate-800">
-                                <div class="text-xs">
-                                    <span class="font-medium text-slate-800 dark:text-slate-200">Type 2 Diabetes / Insulin Resistance</span>
-                                    <p class="text-[11px] text-slate-400">Family history of glycemic dysregulation</p>
-                                </div>
+                            <label class="flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" id="input-family-diabetes" name="family_diabetes" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 dark:bg-slate-800">
+                                <span>Type 2 Diabetes Mellitus</span>
                             </label>
-
-                            <label class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 cursor-pointer transition-colors">
-                                <input type="checkbox" id="input-family-hypertension" name="family_hypertension" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 dark:bg-slate-800">
-                                <div class="text-xs">
-                                    <span class="font-medium text-slate-800 dark:text-slate-200">Chronic Hypertension</span>
-                                    <p class="text-[11px] text-slate-400">High blood pressure requiring therapy</p>
-                                </div>
+                            <label class="flex items-center space-x-3 text-xs text-slate-700 dark:text-slate-300 cursor-pointer">
+                                <input type="checkbox" id="input-family-hypertension" name="family_hypertension" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300 dark:border-slate-700 dark:bg-slate-800">
+                                <span>Hypertension (High Blood Pressure)</span>
                             </label>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- Submit Button Bar -->
-                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200 dark:border-slate-800">
-                    <div class="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-emerald-500 text-sm"></i>
-                        <span>100% Client-side privacy guaranteed. No health data is stored or logged.</span>
-                    </div>
-
-                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-sm sm:text-base shadow-lg shadow-emerald-600/30 hover:shadow-emerald-600/50 hover:scale-[1.02] active:scale-[0.99] transition-all flex items-center justify-center gap-2.5">
-                        <span id="submit-btn-text">Generate Health Score &amp; Action Plan</span>
-                        <i id="submit-btn-icon" class="fa-solid fa-arrow-right"></i>
-                        <svg id="submit-spinner" class="hidden animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
+                <div class="pt-4 flex justify-center">
+                    <button type="submit" id="submit-btn" class="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 hover:from-emerald-700 hover:to-indigo-700 text-white font-bold text-base shadow-xl shadow-emerald-500/20 transition-all flex items-center justify-center gap-3">
+                        <i id="submit-btn-icon" class="fa-solid fa-calculator"></i>
+                        <span id="submit-spinner" class="hidden">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        </span>
+                        <span id="submit-btn-text">Generate Physical Health Score &amp; Action Plan</span>
                     </button>
                 </div>
             </form>
         </section>
 
-        <!-- Results Section (Initially Hidden until calculated) -->
-        <section id="results-section" class="hidden scroll-mt-20 space-y-8 animate-fade-in">
-
-            <!-- Section Title & Action Buttons -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-slate-800">
+        <!-- PHYSICAL HEALTH RESULTS DASHBOARD (Preserved) -->
+        <section id="results-section" class="scroll-mt-20 hidden space-y-8 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-4">
                 <div>
-                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Clinical Evaluation Output</span>
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Analysis Complete</span>
                     <h2 class="text-2xl sm:text-3xl font-extrabold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">
-                        Your Comprehensive Health Profile
+                        Comprehensive Health Evaluation
                     </h2>
                 </div>
-                <div class="flex items-center gap-2.5">
-                    <button type="button" onclick="window.print()" class="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-print"></i> Print / Save Report
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="window.print()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 text-slate-700 dark:text-slate-300 transition-colors flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-print"></i> Print PDF Report
                     </button>
-                    <a href="#input-section" class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900 transition-all flex items-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-pen-to-square"></i> Modify Inputs
-                    </a>
                 </div>
             </div>
 
-            <!-- Score Hero Card: Gauge + Biological Age -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-
-                <!-- Left: Circular Health Score Gauge -->
-                <div class="lg:col-span-6 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-950 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
-                    <div class="absolute -top-12 -right-12 w-48 h-48 bg-emerald-500/10 dark:bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-
-                    <!-- Gauge SVG -->
-                    <div class="relative w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center mb-4">
+            <!-- Score Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Overall Score -->
+                <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-center space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Predicted Overall Health Score</span>
+                    <div class="relative w-36 h-36 flex items-center justify-center">
                         <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
-                            <!-- Background Track -->
-                            <circle cx="60" cy="60" r="50" fill="transparent" stroke="currentColor" stroke-width="10" class="text-slate-200 dark:text-slate-800" stroke-linecap="round"></circle>
-                            <!-- Animated Score Progress Circle -->
-                            <circle id="score-circle-progress" cx="60" cy="60" r="50" fill="transparent" stroke="url(#score-gradient)" stroke-width="10" stroke-linecap="round" stroke-dasharray="314.159" stroke-dashoffset="314.159" class="transition-all duration-1000 ease-out"></circle>
-                            <!-- Gradient Definition -->
-                            <defs>
-                                <linearGradient id="score-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#10b981" />
-                                    <stop offset="50%" stop-color="#0ea5e9" />
-                                    <stop offset="100%" stop-color="#6366f1" />
-                                </linearGradient>
-                            </defs>
+                            <circle cx="60" cy="60" r="54" class="stroke-slate-100 dark:stroke-slate-800" stroke-width="10" fill="transparent"></circle>
+                            <circle id="score-circle" cx="60" cy="60" r="54" stroke="#10b981" stroke-width="10" stroke-linecap="round" fill="transparent" stroke-dasharray="339.29 339.29" stroke-dashoffset="339.29" class="transition-all duration-1000 ease-out"></circle>
                         </svg>
-
-                        <!-- Center Text Content -->
-                        <div class="absolute inset-0 flex flex-col items-center justify-center">
-                            <span class="text-xs uppercase tracking-widest font-semibold text-slate-400">Vitality Index</span>
-                            <div class="flex items-baseline">
-                                <span id="res-score-number" class="text-5xl sm:text-6xl font-black font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">0</span>
-                                <span class="text-lg font-bold text-slate-400">/100</span>
-                            </div>
-                            <span id="res-status-badge" class="mt-1 px-3 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                                Optimal
-                            </span>
+                        <div class="absolute flex flex-col items-center justify-center">
+                            <span id="res-score-number" class="text-4xl font-black font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">--</span>
+                            <span class="text-[11px] uppercase font-bold text-slate-400">/ 100</span>
                         </div>
                     </div>
-
-                    <!-- Score Quote Summary -->
-                    <p id="res-score-quote" class="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-md font-medium">
-                        Calculating biomarker synthesis...
-                    </p>
-
-                    <!-- Quick Vitals Snapshot Badges -->
-                    <div class="grid grid-cols-3 gap-2 w-full mt-6 pt-4 border-t border-slate-100 dark:border-slate-800 text-center">
-                        <div class="p-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/60">
-                            <span class="block text-[11px] text-slate-400">BMI</span>
-                            <strong id="res-bmi-val" class="text-xs sm:text-sm text-slate-800 dark:text-slate-200">--</strong>
-                        </div>
-                        <div class="p-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/60">
-                            <span class="block text-[11px] text-slate-400">Blood Pressure</span>
-                            <strong id="res-bp-val" class="text-xs sm:text-sm text-slate-800 dark:text-slate-200">--</strong>
-                        </div>
-                        <div class="p-2 rounded-xl bg-slate-100/70 dark:bg-slate-800/60">
-                            <span class="block text-[11px] text-slate-400">Fasting Glucose</span>
-                            <strong id="res-glucose-val" class="text-xs sm:text-sm text-slate-800 dark:text-slate-200">--</strong>
-                        </div>
+                    <div>
+                        <span id="res-status-badge" class="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider bg-emerald-100 text-emerald-800 border-emerald-300">
+                            Evaluating
+                        </span>
                     </div>
                 </div>
 
-                <!-- Right: Biological Age & Longevity Biomarker Engine -->
-                <div class="lg:col-span-6 flex flex-col justify-between space-y-6">
-
-                    <!-- Biological Age Card -->
-                    <div class="bg-white dark:bg-slate-900 p-6 sm:p-7 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-8 h-8 rounded-xl bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-bold">
-                                    <i class="fa-solid fa-hourglass-half"></i>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-base text-slate-900 dark:text-white">Biological Age Comparison</h3>
-                                    <p class="text-xs text-slate-400">Physiological state vs. chronological calendar age</p>
-                                </div>
-                            </div>
-                            <span id="res-bio-status-badge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
-                                --
-                            </span>
+                <!-- Biological Age -->
+                <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Phenotypic Longevity</span>
+                        <i class="fa-solid fa-hourglass-half text-emerald-500"></i>
+                    </div>
+                    <div class="text-center py-2">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1">Estimated Biological Age</span>
+                        <div class="text-4xl font-extrabold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white flex items-center justify-center gap-2">
+                            <span id="res-bio-age">--</span>
+                            <span class="text-lg font-medium text-slate-400">yrs</span>
                         </div>
-
-                        <!-- Age Comparison Visual -->
-                        <div class="grid grid-cols-2 gap-4 my-4 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
-                            <div class="text-center border-r border-slate-200 dark:border-slate-700">
-                                <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1">Chronological Age</span>
-                                <span id="res-chrono-age" class="text-3xl font-extrabold text-slate-700 dark:text-slate-300">32</span>
-                                <span class="text-xs text-slate-400 block">Years</span>
-                            </div>
-                            <div class="text-center">
-                                <span class="text-xs text-slate-500 dark:text-slate-400 block mb-1">Estimated Biological Age</span>
-                                <div class="flex items-center justify-center gap-1.5">
-                                    <span id="res-bio-age" class="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">28.5</span>
-                                    <span id="res-bio-delta" class="text-xs font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300">-3.5 yrs</span>
-                                </div>
-                                <span class="text-xs text-slate-400 block">Biological Wear &amp; Tear</span>
-                            </div>
-                        </div>
-
-                        <p id="res-bio-comment" class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+                        <div id="res-age-diff-badge" class="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300">
                             --
+                        </div>
+                    </div>
+                    <p class="text-[11px] text-slate-500 dark:text-slate-400 text-center">
+                        Calculated via physiological biomarker offsets against population actuarial averages.
+                    </p>
+                </div>
+
+                <!-- Cardiovascular & Metabolic Risk Tier -->
+                <div class="p-6 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-400">10-Year Clinical Projection</span>
+                        <i class="fa-solid fa-heart-crack text-rose-500"></i>
+                    </div>
+                    <div class="text-center py-2 space-y-2">
+                        <span class="text-xs text-slate-500 dark:text-slate-400 block">Cardiovascular &amp; Metabolic Risk Tier</span>
+                        <div id="res-risk-tier-badge" class="inline-block px-4 py-1.5 rounded-full text-sm font-bold bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-200">
+                            Calculating...
+                        </div>
+                        <p id="res-risk-desc" class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed px-2">
+                            Awaiting risk profile synthesis.
                         </p>
                     </div>
-
-                    <!-- Risk Profile Indicators -->
-                    <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-md">
-                        <h3 class="font-bold text-sm text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                            <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Clinical Risk Stratification
-                        </h3>
-                        <div id="risk-meters-container" class="space-y-3">
-                            <!-- Populated dynamically via JS -->
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Pillars of Health Breakdown & Radar Chart -->
-            <div class="bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-4">
-                    <div>
-                        <h3 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-layer-group text-teal-500"></i> The 6 Core Pillars of Health
-                        </h3>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">A granular assessment of your vitality dimensions</p>
-                    </div>
-                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                        Normalized 0 - 100 Benchmarks
-                    </span>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                    <!-- Radar Chart Container -->
-                    <div class="lg:col-span-5 flex items-center justify-center">
-                        <div class="w-full max-w-[340px] aspect-square relative">
-                            <canvas id="healthRadarChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Pillar Progress Cards Grid -->
-                    <div id="pillars-container" class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- Populated dynamically via JS -->
+                    <div class="text-[11px] text-slate-400 text-center flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-circle-info"></i> Framingham &amp; AHA Reference
                     </div>
                 </div>
             </div>
 
-            <!-- Future Action Plan (Multi-Horizon Roadmap) -->
-            <div id="action-plan-section" class="scroll-mt-20 bg-gradient-to-br from-slate-900 to-slate-950 text-white p-6 sm:p-10 rounded-3xl shadow-2xl space-y-8 border border-slate-800">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
-                    <div>
-                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 mb-2">
-                            <i class="fa-solid fa-compass"></i> Actionable Roadmap
-                        </div>
-                        <h3 class="text-2xl sm:text-3xl font-extrabold font-['Plus_Jakarta_Sans'] text-white">
-                            Your Tailored Future Action Plan
-                        </h3>
-                        <p class="text-sm text-slate-400">Prescriptive, evidence-grounded habits structured across 3 progressive phases.</p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs text-slate-400"><i class="fa-solid fa-check-double text-emerald-400 mr-1"></i> Interactive Checklist</span>
+            <!-- Pillars and Radar -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Pillars -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2">
+                        <i class="fa-solid fa-cubes text-emerald-500"></i> 6 Core Health Pillars
+                    </h4>
+                    <div id="pillars-container" class="space-y-3"></div>
+                </div>
+                <!-- Radar -->
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                    <h4 class="font-bold text-base text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+                        <i class="fa-solid fa-chart-radar text-teal-500"></i> Health Spider Graph
+                    </h4>
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="radar-chart"></canvas>
                     </div>
                 </div>
+            </div>
 
-                <!-- Phase 1: Days 1 - 14 Quick Wins -->
+            <!-- Risk Factors and Positives -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h4 class="font-bold text-sm text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Identified Risk Factors
+                    </h4>
+                    <div id="risks-container" class="space-y-2.5"></div>
+                </div>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+                    <h4 class="font-bold text-sm text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                        <i class="fa-solid fa-shield-check"></i> Positive Biomarkers
+                    </h4>
+                    <div id="strengths-container" class="space-y-2.5"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PHYSICAL ACTION PLAN ROADMAP (Preserved) -->
+        <section id="action-plan-section" class="scroll-mt-20 hidden space-y-8 animate-fade-in">
+            <div class="p-6 sm:p-8 rounded-3xl bg-slate-900 text-white shadow-xl space-y-6">
+                <h3 class="text-2xl font-extrabold">Personalized 3-Phase Future Action Roadmap</h3>
+                
                 <div class="space-y-3">
-                    <div class="flex items-center gap-3">
-                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-emerald-500 text-slate-950">Phase 1</span>
-                        <h4 class="font-bold text-lg text-emerald-300">Days 1 - 14: Immediate Micro-Habits &amp; Quick Wins</h4>
-                    </div>
-                    <p class="text-xs text-slate-400">Targeting your most vulnerable biomarkers with effortless friction-free momentum.</p>
-
-                    <div id="quick-wins-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                        <!-- Populated dynamically via JS -->
-                    </div>
+                    <h4 class="font-bold text-lg text-emerald-400">Phase 1: Days 1 - 14 Rapid De-Risking</h4>
+                    <div id="quick-wins-container" class="space-y-3"></div>
                 </div>
 
-                <!-- Phase 2: Days 15 - 45 Routine Architecture -->
                 <div class="space-y-3 pt-4 border-t border-slate-800">
-                    <div class="flex items-center gap-3">
-                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-teal-400 text-slate-950">Phase 2</span>
-                        <h4 class="font-bold text-lg text-teal-300">Days 15 - 45: Lifestyle Routine Architecture</h4>
-                    </div>
-                    <p class="text-xs text-slate-400">Establishing sustainable weekly protocols for fitness, diet, and circadian rhythm.</p>
-
-                    <div id="routine-plan-container" class="space-y-3 pt-2">
-                        <!-- Populated dynamically via JS -->
-                    </div>
+                    <h4 class="font-bold text-lg text-teal-300">Phase 2: Days 15 - 45 Routine Architecture</h4>
+                    <div id="routine-plan-container" class="space-y-3"></div>
                 </div>
 
-                <!-- Phase 3: Days 46 - 90 Long-term Transformation Goals -->
                 <div class="space-y-3 pt-4 border-t border-slate-800">
-                    <div class="flex items-center gap-3">
-                        <span class="px-2.5 py-1 text-xs font-bold uppercase tracking-wider rounded-lg bg-indigo-400 text-slate-950">Phase 3</span>
-                        <h4 class="font-bold text-lg text-indigo-300">Days 46 - 90: Measurable Longevity Milestones</h4>
-                    </div>
-                    <p class="text-xs text-slate-400">Hard clinical milestones to track sustained physiological improvements.</p>
-
-                    <div id="longterm-plan-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                        <!-- Populated dynamically via JS -->
-                    </div>
+                    <h4 class="font-bold text-lg text-indigo-300">Phase 3: Days 46 - 90 Milestones</h4>
+                    <div id="longterm-plan-container" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <!-- Clinical Diagnostic & Lab Screening Guide -->
                 <div class="p-6 rounded-2xl bg-slate-800/80 border border-slate-700/80 space-y-4">
-                    <div class="flex items-center gap-2.5 text-rose-400">
-                        <i class="fa-solid fa-stethoscope text-xl"></i>
-                        <h4 class="font-bold text-base text-white">Recommended Clinical Lab Screenings</h4>
-                    </div>
-                    <p class="text-xs text-slate-300">Based on your flagged parameters, consider discussing these standard diagnostic evaluations with your healthcare provider at your next annual physical:</p>
-
-                    <div id="clinical-actions-container" class="space-y-2.5 pt-1">
-                        <!-- Populated dynamically via JS -->
-                    </div>
+                    <h4 class="font-bold text-base text-white">Recommended Clinical Lab Screenings</h4>
+                    <div id="clinical-actions-container" class="space-y-2.5"></div>
                 </div>
-
             </div>
-
         </section>
 
     </main>
@@ -667,16 +1212,17 @@
     <footer class="mt-16 border-t border-slate-200 dark:border-slate-800 py-8 bg-white dark:bg-slate-950 text-xs text-slate-500 dark:text-slate-400 text-center space-y-2">
         <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
-                <span class="font-bold text-slate-700 dark:text-slate-300">Vitalis Health AI</span>
-                <span>— Predictive Longevity &amp; Vitality Engine</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300">MindVitalis AI</span>
+                <span>— Predictive Mental Health, Stress &amp; Longevity Engine</span>
             </div>
             <p class="text-[11px] max-w-xl text-slate-400 dark:text-slate-500">
-                Medical Disclaimer: Vitalis AI is an educational predictive modeling tool and does not provide formal medical diagnoses or clinical prescriptions. Always seek the advice of a qualified physician with any health questions.
+                Educational Disclaimer: MindVitalis AI is an educational predictive modeling and psychometric screening tool. It does not provide medical diagnoses.
             </p>
         </div>
     </footer>
 
-    <!-- App Logic Script -->
+    <!-- App Logic Scripts -->
     <script src="/static/js/app.js"></script>
+    <script src="/static/js/mental_health.js"></script>
 </body>
 </html>
